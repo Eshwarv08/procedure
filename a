@@ -1,0 +1,139 @@
+To use Apache Spark on Windows for processing CSV files (like coronaglobaldata.csv), you need to set up Spark, install the necessary dependencies, and then use it for data processing. Here's how to do it:
+
+Step 1: Install Apache Spark on Windows
+
+1. Install Java Development Kit (JDK):
+
+Spark requires Java to run. Download and install JDK (version 8 or higher) from the Oracle website or from AdoptOpenJDK.
+
+After installation, set the JAVA_HOME environment variable:
+
+1. Right-click on This PC → Properties → Advanced system settings → Environment Variables.
+
+
+2. Add a new System variable with the name JAVA_HOME and set the value to the path of your JDK folder (e.g., C:\Program Files\AdoptOpenJDK\jdk-11).
+
+
+
+
+
+2. Install Spark:
+
+Download Spark from the official Apache Spark website.
+
+Choose a pre-built version (e.g., for Hadoop 3.2 or later).
+
+Extract the Spark archive to a directory of your choice (e.g., C:\spark).
+
+Set the SPARK_HOME environment variable:
+
+1. In the same Environment Variables window, add a new System variable SPARK_HOME and set it to the path where you extracted Spark (e.g., C:\spark).
+
+
+
+
+
+3. Install Hadoop WinUtils (for Windows):
+
+Download winutils.exe from GitHub and place it in the bin folder of your Spark installation (e.g., C:\spark\bin).
+
+
+
+4. Set HADOOP_HOME Environment Variable:
+
+In Environment Variables, create a new System variable HADOOP_HOME and set it to the path of your Spark directory (e.g., C:\spark).
+
+
+
+5. Install Python and PySpark:
+
+Download and install Python from python.org.
+
+Install PySpark using pip:
+
+pip install pyspark
+
+
+
+
+Step 2: Start Spark
+
+1. Open Command Prompt and run Spark:
+
+cd C:\spark\bin
+spark-shell
+
+This will start Spark in the shell.
+
+
+2. (Optional) If using Python, start the PySpark shell:
+
+pyspark
+
+
+
+Step 3: Load and Process the CSV File
+
+Now, let's process coronaglobaldata.csv to find the number of cases by continent and the number of deaths by location.
+
+1. Place the coronaglobaldata.csv file in a directory (e.g., C:\data\coronaglobaldata.csv).
+
+
+2. Write Python code to process the CSV using PySpark:
+
+
+
+from pyspark.sql import SparkSession
+
+# Initialize Spark session
+spark = SparkSession.builder \
+    .appName("Corona Data Analysis") \
+    .getOrCreate()
+
+# Load the CSV file
+df = spark.read.csv("C:/data/coronaglobaldata.csv", header=True, inferSchema=True)
+
+# Show the first few rows of the dataset
+df.show()
+
+# Find the number of cases by continent
+df.groupBy("Continent").sum("TotalCases").show()
+
+# Find the number of deaths by location (Country)
+df.groupBy("Location").sum("TotalDeaths").show()
+
+# Stop the Spark session
+spark.stop()
+
+Explanation of Code:
+
+SparkSession: Initializes a session to work with Spark.
+
+read.csv: Loads the CSV file into a DataFrame.
+
+groupBy: Groups the data by a specific column (Continent or Location).
+
+sum: Calculates the sum of the specified column (TotalCases or TotalDeaths).
+
+show(): Displays the result.
+
+
+Step 4: Run the Code
+
+Save the Python script (e.g., corona_analysis.py).
+
+Run the script using Python:
+
+python corona_analysis.py
+
+
+Expected Output:
+
+1. The number of cases in each continent will be displayed.
+
+
+2. The number of deaths in each location will be displayed.
+
+
+
+Make sure your CSV file contains the columns Continent, Location, TotalCases, and TotalDeaths for this script to work correctly. Adjust column names in the script if necessary.
